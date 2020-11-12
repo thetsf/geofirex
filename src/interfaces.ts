@@ -1,4 +1,4 @@
-import * as fb from 'firebase/app';
+import fb from 'firebase/app';
 
 /**
  * Represents Firebase JS (Web) or Firebase Admin (Node)

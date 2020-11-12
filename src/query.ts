@@ -12,7 +12,7 @@ import {
 import { FeatureCollection, Geometry } from './interfaces';
 import { neighbors, toGeoJSONFeature, distance, bearing, setPrecision } from './util';
 
-import * as fb from 'firebase/app';
+import fb from 'firebase/app';
 import { FirebaseSDK } from './interfaces';
 import { FirePoint } from './client';
 

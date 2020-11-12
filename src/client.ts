@@ -3,7 +3,7 @@ import { FirebaseSDK } from './interfaces';
 import { GeoFireQuery } from './query';
 import { encode, distance, bearing } from './util';
 
-import * as fb from 'firebase/app';
+import fb from 'firebase/app';
 
 export interface FirePoint {
   geopoint: fb.firestore.GeoPoint,
