@@ -1,10 +1,4 @@
-<p align="center">
-
-<a href="https://slackin-pbfjhfxnsa.now.sh"><img src="https://slackin-pbfjhfxnsa.now.sh/badge.svg"></a>
-
-<a href="https://circleci.com/gh/codediodeio/geofirex"><img src="https://circleci.com/gh/codediodeio/geofirex.svg?style=svg"></a>
-
-</p>
+Forked and updated to work with Firebase 8.
 
 # GeoFireX
 

@@ -1,6 +1,6 @@
 {
-    "name": "geofirex",
-    "version": "0.1.0",
+    "name": "geofirex-thetsf",
+    "version": "0.1.1",
     "description": "Realtime Firestore GeoQueries with RxJS",
     "main": "dist/index.cjs.js",
     "module": "dist/index.esm.js",
@@ -11,7 +11,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/codediodeio/geofirex.git"
+        "url": "https://github.com/thetsf/geofirex.git"
     },
     "scripts": {
         "test": "jest --coverage --forceExit --runInBand",
