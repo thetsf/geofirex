@@ -36,6 +36,8 @@ export class GeoFireQuery<T = any> {
       this.ref = collection(db, refString);
 
       // this.ref = this.app.firestore().collection(ref);
+    } else {
+      this.ref = refString;
     }
   }
   // GEO QUERIES
