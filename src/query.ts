@@ -1,10 +1,21 @@
-import {collection, CollectionReference, endAt, getFirestore, orderBy, query, Query, startAt, onSnapshot, QuerySnapshot} from "firebase/firestore";
+import {
+  collection,
+  CollectionReference,
+  endAt,
+  getFirestore,
+  onSnapshot,
+  orderBy,
+  query,
+  Query,
+  QuerySnapshot,
+  startAt
+} from "firebase/firestore";
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {finalize, first, map, shareReplay, takeUntil} from 'rxjs/operators';
 import {FeatureCollection, Geometry} from './interfaces';
 import {bearing, distance, neighbors, setPrecision, toGeoJSONFeature} from './util';
 import {FirePoint} from './client';
-import { FirebaseApp } from 'firebase/app';
+import {FirebaseApp} from 'firebase/app';
 
 export type QueryFn = (
   ref: CollectionReference
@@ -14,7 +25,8 @@ export interface GeoQueryOptions {
   units?: 'km';
   log?: boolean;
 }
-const defaultOpts: GeoQueryOptions = { units: 'km', log: false };
+
+const defaultOpts: GeoQueryOptions = {units: 'km', log: false};
 
 export interface HitMetadata {
   bearing: number;
@@ -26,7 +38,7 @@ export interface GeoQueryDocument {
 }
 
 export class GeoFireQuery<T = any> {
-  private readonly ref: CollectionReference;
+  private readonly ref: any;
   constructor(
     private app: FirebaseApp,
     private refString?: string
@@ -77,14 +89,14 @@ export class GeoFireQuery<T = any> {
     });
 
     // Combine all queries concurrently
-    const combo = combineLatest(...queries).pipe(
+    return combineLatest(...queries).pipe(
       map(arr => {
         // Combine results into a single array
         const reduced = arr.reduce((acc, cur) => acc.concat(cur));
 
         // Filter by radius
         const filtered = reduced.filter(val => {
-          const { latitude, longitude } = val[field].geopoint;
+          const {latitude, longitude} = val[field].geopoint;
 
           return (
             distance([centerLat, centerLng], [latitude, longitude]) <=
@@ -105,13 +117,13 @@ export class GeoFireQuery<T = any> {
         // Map and sort to final output
         return filtered
           .map(val => {
-            const { latitude, longitude } = val[field].geopoint;
+            const {latitude, longitude} = val[field].geopoint;
 
             const hitMetadata = {
               distance: distance([centerLat, centerLng], [latitude, longitude]),
               bearing: bearing([centerLat, centerLng], [latitude, longitude])
             };
-            return { ...val, hitMetadata } as (GeoQueryDocument & T);
+            return {...val, hitMetadata} as (GeoQueryDocument & T);
           })
 
           .sort((a, b) => a.hitMetadata.distance - b.hitMetadata.distance);
@@ -122,8 +134,6 @@ export class GeoFireQuery<T = any> {
         complete.next(true);
       })
     );
-
-    return combo;
   }
 
   private queryPoint(geohash: string, field: string): Query {

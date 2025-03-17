@@ -1,7 +1,7 @@
 import { Point, Feature, Coordinates } from './interfaces';
 
-import turfDistance from '@turf/distance';
-import turfBearing from '@turf/bearing';
+import * as turfDistance from '@turf/distance';
+import * as turfBearing from '@turf/bearing';
 
 
 export function distance(from: Coordinates, to: Coordinates) {
@@ -115,7 +115,7 @@ export const encode = function(latitude, longitude, numberOfChars) {
     numberOfChars = 9;
   }
 
-  var chars = [],
+  let chars: string[] = [],
     bits = 0,
     bitsTotal = 0,
     hash_value = 0,
@@ -148,7 +148,7 @@ export const encode = function(latitude, longitude, numberOfChars) {
     bits++;
     bitsTotal++;
     if (bits === 5) {
-      var code = BASE32_CODES[hash_value];
+      const code = BASE32_CODES[hash_value];
       chars.push(code);
       bits = 0;
       hash_value = 0;
@@ -205,7 +205,8 @@ export const encode_int = function(latitude, longitude, bitDepth) {
 /**
  * Decode Bounding Box
  *
- * Decode hashString into a bound box matches it. Data returned in a four-element array: [minlat, minlon, maxlat, maxlon]
+ * Decode hashString into a bound box matches it. Data returned in a four-element array: [minlat, minlon, maxlat,
+ * maxlon]
  * @param {String} hash_string
  * @returns {Array}
  */
@@ -248,7 +249,8 @@ export const decode_bbox = function(hash_string) {
 /**
  * Decode Bounding Box Integer
  *
- * Decode hash number into a bound box matches it. Data returned in a four-element array: [minlat, minlon, maxlat, maxlon]
+ * Decode hash number into a bound box matches it. Data returned in a four-element array: [minlat, minlon, maxlat,
+ * maxlon]
  * @param {Number} hashInt
  * @param {Number} bitDepth
  * @returns {Array}
@@ -334,13 +336,13 @@ export const decode_int = function(hash_int, bitDepth) {
 /**
  * Neighbor
  *
- * Find neighbor of a geohash string in certain direction. Direction is a two-element array, i.e. [1,0] means north, [-1,-1] means southwest.
- * direction [lat, lon], i.e.
+ * Find neighbor of a geohash string in certain direction. Direction is a two-element array, i.e. [1,0] means north,
+ * [-1,-1] means southwest. direction [lat, lon], i.e.
  * [1,0] - north
  * [1,1] - northeast
  * ...
  * @param {String} hashString
- * @param {Array} Direction as a 2D normalized vector.
+ * @param {Array} direction as a 2D normalized vector.
  * @returns {String}
  */
 export const neighbor = function(hashString, direction) {
@@ -354,13 +356,15 @@ export const neighbor = function(hashString, direction) {
 /**
  * Neighbor Integer
  *
- * Find neighbor of a geohash integer in certain direction. Direction is a two-element array, i.e. [1,0] means north, [-1,-1] means southwest.
- * direction [lat, lon], i.e.
+ * Find neighbor of a geohash integer in certain direction. Direction is a two-element array, i.e. [1,0] means north,
+ * [-1,-1] means southwest. direction [lat, lon], i.e.
  * [1,0] - north
  * [1,1] - northeast
  * ...
- * @param {String} hash_string
  * @returns {Array}
+ * @param hash_int
+ * @param direction
+ * @param bitDepth
  */
 export const neighbor_int = function(hash_int, direction, bitDepth) {
   bitDepth = bitDepth || 52;
