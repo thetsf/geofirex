@@ -1,8 +1,7 @@
-import { Point, Feature, Coordinates } from './interfaces';
+import { Point, Feature, Coordinates } from "./interfaces";
 
-import * as turfDistance from '@turf/distance';
-import * as turfBearing from '@turf/bearing';
-
+import turfDistance from "@turf/distance";
+import turfBearing from "@turf/bearing";
 
 export function distance(from: Coordinates, to: Coordinates) {
   return turfDistance(toGeoJSONFeature(from), toGeoJSONFeature(to));
@@ -12,20 +11,22 @@ export function bearing(from: Coordinates, to: Coordinates) {
   return turfBearing(toGeoJSONFeature(from), toGeoJSONFeature(to));
 }
 
-export function toGeoJSONFeature(coordinates: Coordinates, props?: any): Feature<Point> {
+export function toGeoJSONFeature(
+  coordinates: Coordinates,
+  props?: any
+): Feature<Point> {
   coordinates = flip(coordinates) as Coordinates;
   return {
-    type: 'Feature',
+    type: "Feature",
     geometry: {
-      type: 'Point',
-      coordinates
+      type: "Point",
+      coordinates,
     },
-    properties: props
+    properties: props,
   };
 }
 
-
-export function flip(arr) {
+export function flip(arr: any[]) {
   return [arr[1], arr[0]];
 }
 
@@ -71,13 +72,13 @@ export function setPrecision(km: number): number {
 
 /////// NGEOHASH ////////
 
-var BASE32_CODES = '0123456789bcdefghjkmnpqrstuvwxyz';
-var BASE32_CODES_DICT = {};
+var BASE32_CODES = "0123456789bcdefghjkmnpqrstuvwxyz";
+var BASE32_CODES_DICT: { [key: string]: number } = {};
 for (var i = 0; i < BASE32_CODES.length; i++) {
   BASE32_CODES_DICT[BASE32_CODES.charAt(i)] = i;
 }
 
-var ENCODE_AUTO = 'auto';
+var ENCODE_AUTO = "auto";
 /**
  * Significant Figure Hash Length
  *
@@ -102,13 +103,17 @@ var SIGFIG_HASH_LENGTH = [0, 5, 7, 8, 11, 12, 13, 15, 16, 17, 18];
  * @param {Number} numberOfChars
  * @returns {String}
  */
-export const encode = function(latitude, longitude, numberOfChars) {
+export const encode = function (
+  latitude: number | string,
+  longitude: number | string,
+  numberOfChars?: number | "auto"
+) {
   if (numberOfChars === ENCODE_AUTO) {
-    if (typeof latitude === 'number' || typeof longitude === 'number') {
-      throw new Error('string notation required for auto precision.');
+    if (typeof latitude === "number" || typeof longitude === "number") {
+      throw new Error("string notation required for auto precision.");
     }
-    var decSigFigsLat = latitude.split('.')[1].length;
-    var decSigFigsLong = longitude.split('.')[1].length;
+    var decSigFigsLat = latitude.split(".")[1].length;
+    var decSigFigsLong = longitude.split(".")[1].length;
     var numberOfSigFigs = Math.max(decSigFigsLat, decSigFigsLong);
     numberOfChars = SIGFIG_HASH_LENGTH[numberOfSigFigs];
   } else if (numberOfChars === undefined) {
@@ -124,10 +129,10 @@ export const encode = function(latitude, longitude, numberOfChars) {
     maxLon = 180,
     minLon = -180,
     mid;
-  while (chars.length < numberOfChars) {
+  while (chars.length < (numberOfChars as number)) {
     if (bitsTotal % 2 === 0) {
       mid = (maxLon + minLon) / 2;
-      if (longitude > mid) {
+      if (parseFloat(longitude as string) > mid) {
         hash_value = (hash_value << 1) + 1;
         minLon = mid;
       } else {
@@ -136,7 +141,7 @@ export const encode = function(latitude, longitude, numberOfChars) {
       }
     } else {
       mid = (maxLat + minLat) / 2;
-      if (latitude > mid) {
+      if (parseFloat(latitude as string) > mid) {
         hash_value = (hash_value << 1) + 1;
         minLat = mid;
       } else {
@@ -154,7 +159,7 @@ export const encode = function(latitude, longitude, numberOfChars) {
       hash_value = 0;
     }
   }
-  return chars.join('');
+  return chars.join("");
 };
 
 /**
@@ -167,7 +172,11 @@ export const encode = function(latitude, longitude, numberOfChars) {
  * @param {Number} bitDepth
  * @returns {Number}
  */
-export const encode_int = function(latitude, longitude, bitDepth) {
+export const encode_int = function (
+  latitude: number,
+  longitude: number,
+  bitDepth?: number
+) {
   bitDepth = bitDepth || 52;
 
   var bitsTotal = 0,
@@ -210,7 +219,7 @@ export const encode_int = function(latitude, longitude, bitDepth) {
  * @param {String} hash_string
  * @returns {Array}
  */
-export const decode_bbox = function(hash_string) {
+export const decode_bbox = function (hash_string: string) {
   var isLon = true,
     maxLat = 90,
     minLat = -90,
@@ -255,7 +264,7 @@ export const decode_bbox = function(hash_string) {
  * @param {Number} bitDepth
  * @returns {Array}
  */
-export const decode_bbox_int = function(hashInt, bitDepth) {
+export const decode_bbox_int = function (hashInt: number, bitDepth?: number) {
   bitDepth = bitDepth || 52;
 
   var maxLat = 90,
@@ -286,7 +295,7 @@ export const decode_bbox_int = function(hashInt, bitDepth) {
   return [minLat, minLon, maxLat, maxLon];
 };
 
-function get_bit(bits, position) {
+function get_bit(bits: number, position: number) {
   return (bits / Math.pow(2, position)) & 0x01;
 }
 
@@ -298,7 +307,7 @@ function get_bit(bits, position) {
  * @param {String} hashString
  * @returns {Object}
  */
-export const decode = function(hashString) {
+export const decode = function (hashString: string) {
   var bbox = decode_bbox(hashString);
   var lat = (bbox[0] + bbox[2]) / 2;
   var lon = (bbox[1] + bbox[3]) / 2;
@@ -307,7 +316,7 @@ export const decode = function(hashString) {
   return {
     latitude: lat,
     longitude: lon,
-    error: { latitude: latErr, longitude: lonErr }
+    error: { latitude: latErr, longitude: lonErr },
   };
 };
 
@@ -320,7 +329,7 @@ export const decode = function(hashString) {
  * @param {Number} bitDepth
  * @returns {Object}
  */
-export const decode_int = function(hash_int, bitDepth) {
+export const decode_int = function (hash_int: number, bitDepth?: number) {
   var bbox = decode_bbox_int(hash_int, bitDepth);
   var lat = (bbox[0] + bbox[2]) / 2;
   var lon = (bbox[1] + bbox[3]) / 2;
@@ -329,7 +338,7 @@ export const decode_int = function(hash_int, bitDepth) {
   return {
     latitude: lat,
     longitude: lon,
-    error: { latitude: latErr, longitude: lonErr }
+    error: { latitude: latErr, longitude: lonErr },
   };
 };
 
@@ -345,7 +354,7 @@ export const decode_int = function(hash_int, bitDepth) {
  * @param {Array} direction as a 2D normalized vector.
  * @returns {String}
  */
-export const neighbor = function(hashString, direction) {
+export const neighbor = function (hashString: string, direction: number[]) {
   var lonLat = decode(hashString);
   var neighborLat = lonLat.latitude + direction[0] * lonLat.error.latitude * 2;
   var neighborLon =
@@ -366,7 +375,11 @@ export const neighbor = function(hashString, direction) {
  * @param direction
  * @param bitDepth
  */
-export const neighbor_int = function(hash_int, direction, bitDepth) {
+export const neighbor_int = function (
+  hash_int: number,
+  direction: number[],
+  bitDepth?: number
+) {
   bitDepth = bitDepth || 52;
   var lonlat = decode_int(hash_int, bitDepth);
   var neighbor_lat = lonlat.latitude + direction[0] * lonlat.error.latitude * 2;
@@ -385,7 +398,7 @@ export const neighbor_int = function(hash_int, direction, bitDepth) {
  * @param {String} hash_string
  * @returns {encoded neighborHashList|Array}
  */
-export const neighbors = function(hash_string) {
+export const neighbors = function (hash_string: string) {
   var hashstringLength = hash_string.length;
 
   var lonlat = decode(hash_string);
@@ -404,10 +417,10 @@ export const neighbors = function(hash_string) {
     encodeNeighbor(-1, 0),
     encodeNeighbor(-1, -1),
     encodeNeighbor(0, -1),
-    encodeNeighbor(1, -1)
+    encodeNeighbor(1, -1),
   ];
 
-  function encodeNeighbor(neighborLatDir, neighborLonDir) {
+  function encodeNeighbor(neighborLatDir: number, neighborLonDir: number) {
     neighbor_lat = lat + neighborLatDir * latErr;
     neighbor_lon = lon + neighborLonDir * lonErr;
     return encode(neighbor_lat, neighbor_lon, hashstringLength);

@@ -17,6 +17,7 @@
 
 # Build
 lib
+dist
 
 # Logs
 logs
